@@ -19,8 +19,16 @@ require_once('server/kalturaConfig.php');
 	<!-- <script src="http://html5video.org/kgit/tags/v1.7.0.rc1/mwEmbedLoader.php"></script> -->
 	<script type="text/javascript" src="client/loadmask/jquery.loadmask.min.js"></script>
 	<script src="client/colorbox/colorbox/jquery.colorbox.js"></script>
+	<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+
+	<script type="text/javascript">
+	  // This identifies your website in the createToken call below
+	  // Stripe.setPublishableKey('pk_test_Eh5nOIzdutIJDFPVVQqUcJkJ');
+	</script>
 	<!-- Page Scripts -->
 	<script>
+
+
 		//Access Controled HLS playback is not yet available, check with your Kaltura Account Manager
 		//this will make the playback in iOS use Progressive Download.
 		mw.setConfig('Kaltura.UseAppleAdaptive', false);
@@ -39,6 +47,23 @@ require_once('server/kalturaConfig.php');
 		var currentCategory = "";
 		//Used to track the category link
 		var categoryId = 0;
+
+		// var stripeResponseHandler = function(status, response) {
+  //     var $form = $('#payment-form');
+
+  //     if (response.error) {
+  //       // Show the errors on the form
+  //       $form.find('.payment-errors').text(response.error.message);
+  //       $form.find('button').prop('disabled', false);
+  //     } else {
+  //       // token contains id, last4, and card type
+  //       var token = response.id;
+  //       // Insert the token into the form so it gets submitted to the server
+  //       $form.append($('<input type="hidden" name="stripeToken" />').val(token));
+  //       // and re-submit
+  //       $form.get(0).submit();
+  //     }
+  //   };
 
 		$(document).ready(function(e) {
 			if(1 == <?php
@@ -67,6 +92,19 @@ require_once('server/kalturaConfig.php');
 						showEntries();
 				});
 			}
+			// (function($) {
+			//   $('#payment-form').submit(function(event) {
+			//     var $form = $(this);
+
+			//     // Disable the submit button to prevent repeated clicks
+			//     $form.find('button').prop('disabled', true);
+
+			//     Stripe.card.createToken($form, stripeResponseHandler);
+
+			//     // Prevent the form from submitting with the default action
+			//     return false;
+			//   });
+			// });
 		});
 		
 		//INITIALIZE SESSION WITH APPROPRIATE LANGUAGE
@@ -148,7 +186,7 @@ require_once('server/kalturaConfig.php');
 		        kWidget.embed({
 		                'targetId': kdpId,
 		                'wid': '_<?php echo PARTNER_ID; ?>',
-		                'uiconf_id' : uiConfId,
+		                'uiconf_id' : 27216752, // To fix: get php constant rather than hard coding
 		                'entry_id' : entryId,
 		                'width': 400,
 		                'height': 300,
@@ -370,9 +408,6 @@ require_once('server/kalturaConfig.php');
 					<li>
 						<a href="javascript:showAllPurchases()">Click here to see your purchased videos and channels</a>
 					</li>
-					<li>
-						<a href="javascript:window.scrollTo(0,document.body.scrollHeight)">Read an important note about this demo</a>
-					</li>
 				</ul>
 			</div>
 			<div id="userVideos" style="float: left;"></div>
@@ -397,21 +432,10 @@ require_once('server/kalturaConfig.php');
 		<div id="adminDiv">
 			<button id="adminButton" type="button" onclick="location.href='AccountWizard'" style="margin-bottom: 11px; margin-left: -2px;">Admin Account Wizard</button>
 		</div>
-		<div class="notep">
-			<ul style="margin: 0;">
-				<li>
-					<strong>This application is using a Sandbox PayPal demo account.</strong> All pay-videos are set with a 10sec free preview.
-				</li>
-				<li>
-					To purchase, use the following credentials - user: <span class="italicbold">john_1344640136_per@kaltura.com</span> &nbsp; pass: <span class="italicbold">kaltura2012</span>
-				</li>
-				<li>
-					For the purposes of the demo, the application creates new users based on the client IP address and stores it as a browser cookie. In a production environment it is encouraged to create an actual user registration system.
-				</li>
-			</ul>
-		</div>
 	</div>
-	<div id="purchaseWindow"></div>
+	<div id="purchaseWindow">
+		
+	</div>
 	<div id="entryHighlight"></div>
 </body>
 </html>
