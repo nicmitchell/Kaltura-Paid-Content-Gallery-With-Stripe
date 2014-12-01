@@ -48,37 +48,23 @@ if ($metaResults->totalCount > 0) {
 	$also = 'also ';
 }
 
+$stripe = '<form action="" method="POST">
+	  <script
+	    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+	    data-key="pk_test_Eh5nOIzdutIJDFPVVQqUcJkJ"
+	    data-amount="500"
+	    data-name="Pay Per View Content"
+	    data-description="Premium Media"
+	    data-image="/128x128.png">
+	  </script>
+	  </form>';
+
+	  $test_script = '<script>var do stuff</script>';
 
 echo '<div>';
-if($price != 0) { ?>
-	<form action="" method="POST" id="payment-form">
-    <span class="payment-errors"></span>
- 
-    <div class="form-row">
-      <label>
-        <span>Card Number</span>
-        <input type="text" size="20" data-stripe="number"/>
-      </label>
-    </div>
- 
-    <div class="form-row">
-      <label>
-        <span>CVC</span>
-        <input type="text" size="4" data-stripe="cvc"/>
-      </label>
-    </div>
- 
-    <div class="form-row">
-      <label>
-        <span>Expiration (MM/YYYY)</span>
-        <input type="text" size="2" data-stripe="exp-month"/>
-      </label>
-      <span> / </span>
-      <input type="text" size="4" data-stripe="exp-year"/>
-    </div>
- 
-    <button type="submit">Submit Payment</button>
-  </form><?php
+if($price != 0) { 
+	echo $stripe;
+	echo $test_script;
 	echo 'This is a premium item. You can purchase access to continue viewing the rest of this media:';
 	// echo '<button id="buyNowButton" class="buyButton" type="button" onclick="bill('."'".$_REQUEST['entryId']."'".')">Buy Now</button>';
 	echo ' for '.$currencyCode.' '.number_format($price * (1 + .01 * $tax), 2);

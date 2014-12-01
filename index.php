@@ -367,6 +367,7 @@ require_once('server/kalturaConfig.php');
 		//This is shown when a video's free preview ends and a purchase
 		//is required to continue viewing the content
 		function showPurchaseWindow(entryId) {
+
 			kdp.sendNotification('doPause');
 			$('#purchaseWindow').css('top', $('#playerDiv').offset().top);
 			$('#purchaseWindow').css('left', $('#playerDiv').offset().left);
@@ -378,7 +379,8 @@ require_once('server/kalturaConfig.php');
 				data: {entryId: entryId}
 			}).done(function(msg) {
 				$('#purchaseWindow').show();
-				$('#purchaseWindow').html(msg);
+				// $('#purchaseWindow').append(stripe);
+				// $('#purchaseWindow').append(msg);
 			});
 		}
 
@@ -434,7 +436,16 @@ require_once('server/kalturaConfig.php');
 		</div>
 	</div>
 	<div id="purchaseWindow">
-		
+		<form action="" method="POST">
+	  <script
+	    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+	    data-key="pk_test_Eh5nOIzdutIJDFPVVQqUcJkJ"
+	    data-amount="500"
+	    data-name="Pay Per View Content"
+	    data-description="Premium Media"
+	    data-image="/128x128.png">
+	  </script>
+	  </form>
 	</div>
 	<div id="entryHighlight"></div>
 </body>
