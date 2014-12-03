@@ -96,6 +96,7 @@ echo '<div class="entriesDiv" style="height: 312px;">';
 $count = 0;
 //Loops through every entry on your current page
 foreach ($results->objects as $result) {
+
 	//Creates a thumbnail that can be clicked to view the content
 	$name = $result->name;
 	$type = $result->mediaType;
@@ -106,6 +107,20 @@ foreach ($results->objects as $result) {
 	$pager->pageSize = 50;
 	$pager->pageIndex = 1;
 	$metaResults = $client->metadata->listAction($filter, $pager)->objects;
+	foreach($metaResults as $meta){
+		// var_dump($meta);
+		$xml = simplexml_load_string($meta->xml);
+	$price = (float) $xml->Price;
+	}
+	// $xml = simplexml_load_string($metaResults->xml);
+	// $price = (float) $xml->Price;
+	// foreach($metaResults->objects as $metaResult) {
+// var_dump( $metaResults );
+		// if($metaResults->metadataProfileId == PAYPAL_METADATA_PROFILE_ID) {
+		// 	$xml = simplexml_load_string($metaResult->xml);
+		// 	// $entry = $client->media->get($itemId);
+		// 	$price = (float) $xml->Price;
+		// }
 	$categoryNames = explode(',', $result->categories);
 	$title = $name."\n"."Belongs to channel(s): ";
 	foreach($categoryNames as $categoryName)
@@ -121,6 +136,7 @@ foreach ($results->objects as $result) {
 	$filterAdvancedSearch = new KalturaMetadataSearchItem();
 	$filterAdvancedSearch->type = KalturaSearchOperatorType::SEARCH_AND;
 	$filterAdvancedSearch->metadataProfileId = PAYPAL_METADATA_PROFILE_ID;
+
 	$filterAdvancedSearchItems = array();
 	$filterAdvancedSearchItems0 = new KalturaSearchCondition();
 	$filterAdvancedSearchItems0->field = "/*[local-name()='metadata']/*[local-name()='Paid']";
@@ -129,6 +145,8 @@ foreach ($results->objects as $result) {
 	$filterAdvancedSearch->items = $filterAdvancedSearchItems;
 	$filter->advancedSearch = $filterAdvancedSearch;
 	$results = $client->media->listAction($filter, $pager)->objects;
+	// $xml = simplexml_load_string($result->xml);
+	// $price = (float) $xml->Price;
 	if(count($results) > 0)
 		$display =  $result->thumbnailUrl ? '<img width="120" height="68" id="thumb'.$count.'" style="background:url('.$result->thumbnailUrl.')" src="client/premiumentry.png" title="'.$title.'" >' : '<div>'.$id.' '.$name.'</div>';
 	//If the entry is instead part of a paid channel, display an icon over the thumbnail to indicate this
@@ -157,7 +175,7 @@ foreach ($results->objects as $result) {
 		$display =  $result->thumbnailUrl ? '<img width="120" height="68" id="thumb'.$count.'" src="'.$result->thumbnailUrl.'" title="'.$title.'" >' : '<div>'.$id.' '.$name.'</div>';
 	$display .= '<img src="client/play.png" id="play">';
 	$cats = $result->categoriesIds;
-	$thumbnail = '<a class="thumblink" rel="'.$result->id.'" cats="'.$cats.'" title="'.$title.'" >'.$display.'</a>';
+	$thumbnail = '<a class="thumblink" data-price="'. $price .'" rel="'.$result->id.'" cats="'.$cats.'" title="'.$title.'" >'.$display.'</a>';
 	echo '<div class="float1">';
 		echo $thumbnail.'   ';
 	echo '</div>';

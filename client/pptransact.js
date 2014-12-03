@@ -1,9 +1,9 @@
 // JavaScript Document
 
-var dg = new PAYPAL.apps.DGFlow({});
+// var dg = new PAYPAL.apps.DGFlow({});
 
 var pptransact = function(url) {
-	var languageCenters = {"php": "server/pptransact.php",
+	var languageCenters = {"php": "server/stripePurchase.php", //"server/pptransact.php",
 	                       "py": "server/python/pptransact.py",
 						   "cf": "server/coldfusion/pptransact.cfc",
 						   "java": "server/java/pptransact.jsp"};
@@ -29,8 +29,13 @@ var pptransact = function(url) {
 			pptransact.setSuccessBillCallBack(inputArgs.successCallback);
 			pptransact.setFailBillCallBack(inputArgs.failCallback);
 			
+			// should be able to change this to Stripe
 			var data = 'method=getToken&itemId=' + encodeURIComponent(inputArgs.itemId) + "&qty=" + encodeURIComponent(inputArgs.itemQty) + "&userId=" + userId + "&mobile=" + this.mobile;
+			var data = inputArgs;
+			data.userId = userId;
 			pptransact.callServer(data,function(data){
+				// now calls stripePurchase.php
+				// what is data from call server?
 				if(data.error){
 					alert('error starting bill flow');
 				} else {
@@ -162,12 +167,15 @@ var pptransact = function(url) {
 		},
 		
 		callServer : function(data, callbackFnk, failCallback){
+			debugger;
 			$.ajax({
-				url: pptransact.getUrl(),
+				type: 'POST',
+				url: 'http://maximknight.dev/Stripe%20Kaltura/server/stripePurchase.php',
 				async: false,
 				data: data,
 				success: function(data){
 					var obj = $.parseJSON(data);
+					console.log('call server', obj);
 					
 					if(typeof callbackFnk == 'function'){
 						callbackFnk.call(this, obj);

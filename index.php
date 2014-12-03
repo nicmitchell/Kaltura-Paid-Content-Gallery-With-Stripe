@@ -1,6 +1,47 @@
 <!DOCTYPE HTML>
 <?php
 require_once('server/kalturaConfig.php');
+require_once('server/stripe-php/lib/Stripe.php');
+// Set your secret key: remember to change this to your live secret key in production
+// See your keys here https://dashboard.stripe.com/account
+// if(isset($_POST['stripeToken'])){
+
+// // 	Stripe::setApiKey("sk_test_NiowSWa0qgCh0guA1wCk1nJp");
+
+// // 	// Get the credit card details submitted by the form
+// 	$token = $_POST['stripeToken'];
+// 	$amount = $_POST['stripeAmount'];
+// 	$entryId = $_POST['entryId'];
+
+	
+// 	bill
+
+// 	// Create the charge on Stripe's servers - this will charge the user's card
+// 	try {
+// 	$charge = Stripe_Charge::create(
+// 		array(
+// 		  "amount" => $amount,
+// 		  "currency" => "usd",
+// 		  "card" => $token,
+// 		  "description" => "PPV Example")
+// 		);
+// 	} catch(Stripe_CardError $e) {
+// 	  // The card has been declined
+// 	}
+// 	// use the bill function
+// 	pptransact.bill()
+
+// 	// save Kaltura metadata
+// 	savePurchase(entryId);
+
+// 	// generate KS for paid video
+// 	$ks = checkAccess(entryId);
+
+// 	echo 'charged';
+// 	var_dump( $_POST );
+// 	echo $charge;
+// }
+
 ?>
 <html>
 <head>
@@ -11,7 +52,6 @@ require_once('server/kalturaConfig.php');
 	<link href="client/loadmask/jquery.loadmask.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="client/colorbox/example4/colorbox.css" />
 	<!-- Script Includes -->
-	<script src="https://www.paypalobjects.com/js/external/dg.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<script src="client/pptransact.js"></script>
 	<!-- script src="http://html5.kaltura.org/js"></script-->
@@ -20,14 +60,11 @@ require_once('server/kalturaConfig.php');
 	<script type="text/javascript" src="client/loadmask/jquery.loadmask.min.js"></script>
 	<script src="client/colorbox/colorbox/jquery.colorbox.js"></script>
 	<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
-
-	<script type="text/javascript">
-	  // This identifies your website in the createToken call below
-	  // Stripe.setPublishableKey('pk_test_Eh5nOIzdutIJDFPVVQqUcJkJ');
-	</script>
+	<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.8.1/jquery.validate.min.js"></script>
 	<!-- Page Scripts -->
 	<script>
-
+	  // This identifies your website in the createToken call below
+	  Stripe.setPublishableKey('pk_test_Eh5nOIzdutIJDFPVVQqUcJkJ');
 
 		//Access Controled HLS playback is not yet available, check with your Kaltura Account Manager
 		//this will make the playback in iOS use Progressive Download.
@@ -47,23 +84,6 @@ require_once('server/kalturaConfig.php');
 		var currentCategory = "";
 		//Used to track the category link
 		var categoryId = 0;
-
-		// var stripeResponseHandler = function(status, response) {
-  //     var $form = $('#payment-form');
-
-  //     if (response.error) {
-  //       // Show the errors on the form
-  //       $form.find('.payment-errors').text(response.error.message);
-  //       $form.find('button').prop('disabled', false);
-  //     } else {
-  //       // token contains id, last4, and card type
-  //       var token = response.id;
-  //       // Insert the token into the form so it gets submitted to the server
-  //       $form.append($('<input type="hidden" name="stripeToken" />').val(token));
-  //       // and re-submit
-  //       $form.get(0).submit();
-  //     }
-  //   };
 
 		$(document).ready(function(e) {
 			if(1 == <?php
@@ -92,41 +112,99 @@ require_once('server/kalturaConfig.php');
 						showEntries();
 				});
 			}
-			// (function($) {
-			//   $('#payment-form').submit(function(event) {
-			//     var $form = $(this);
+			// if(isset($_POST['stripeToken'])){
+			// 	// Get the details submitted by the form
+			// 	$token = $_POST['stripeToken'];
+			// 	$amount = $_POST['stripeAmount'];
+			// 	$entryId = $_POST['entryId'];
+			// 	?>
+			// 	bill(entryId, $amount)
+			jQuery(function($) {
+			  $('#payment-form').submit(function(event) {
+			    var $form = $(this);
+			    // debugger;
+			    console.log('form', $form);
 
-			//     // Disable the submit button to prevent repeated clicks
-			//     $form.find('button').prop('disabled', true);
+			    // Disable the submit button to prevent repeated clicks
+			    $form.find('button').prop('disabled', true);
 
-			//     Stripe.card.createToken($form, stripeResponseHandler);
+			    Stripe.card.createToken($form, stripeResponseHandler);
 
-			//     // Prevent the form from submitting with the default action
-			//     return false;
-			//   });
-			// });
+			    // Prevent the form from submitting with the default action
+			    return false;
+			  });
+			});
 		});
+
+		function stripeResponseHandler(status, response) {
+		  var $form = $('#payment-form');
+		  // debugger;
+
+		  if (response.error) {
+		    // Show the errors on the form
+		    $form.find('.payment-errors').text(response.error.message);
+		    $form.find('button').prop('disabled', false);
+		  } else {
+		    // response contains id and card, which contains additional card details
+		    var token = response.id;
+		    // Insert the token into the form so it gets submitted to the server
+		    $form.append($('<input type="hidden" name="stripeToken" />').val(token));
+		    //get all necessary values
+	    	var amount = $form.find('input[name="stripeAmount"]').val();
+	    	var entryId = $form.find('input[name="entryId"]').val();
+		    bill(entryId, amount, token);
+		    // and submit
+		    console.log(response);
+		    // $form.get(0).submit();
+		  }
+		};
 		
 		//INITIALIZE SESSION WITH APPROPRIATE LANGUAGE
 		pptransact.init('php',false);
 
 		//Initializes the PayPal express checkout billing system
-		function bill(entryId) {
-			pptransact.bill({
-				userId:'<?php echo $USER_ID; ?>',
-				itemId:entryId,
-				itemQty:'1',
-				successCallback: function(ret) {
-					//bill success
-					savePurchase(ret);
+		function bill(entryId, amount, token) {
+			$.ajax({
+				type: "POST",
+				url: "server/stripePurchase.php",
+				data: { 
+					token: token,
+					amount: amount,
+					entryId: entryId
 				},
-				failCallback: function() {
-					//bill canceled
+				success: function(res){
+					console.log('bill success', res);
+					savePurchase(res);
+				},
+				failure: function(res){
+					console.log('bill fail', res);
 				}
+			}).done(function(msg) {
+				savePurchase(msg);
+				$('#purchaseWindow').hide();
+				console.log("bill", msg);
 			});
+				// checkAccess(currentEntry, ret);
+			// });
+			// pptransact.bill({
+			// 	userId:'<?php echo $USER_ID; ?>',
+			// 	itemId:entryId,
+			// 	itemQty:'1',
+			// 	amount: amount,
+			// 	token: token,
+			// 	successCallback: function(ret) {
+			// 		//bill success
+			// 		console.log('bill success', ret);
+			// 		savePurchase(ret);
+			// 	},
+			// 	failCallback: function() {
+			// 		//bill canceled
+			// 	}
+			// });
 		}
 
 		function savePurchase(ret) {
+			console.log('save', ret);
 			$.ajax({
 				type: "POST",
 				url: "server/savePurchase.php",
@@ -231,7 +309,14 @@ require_once('server/kalturaConfig.php');
 				//This is called whenever a video's thumbnail is clicked
 				$(".thumblink").click(function () {
 					$('#purchaseWindow').hide();
-					$('#purchaseWindow').html('');
+					// var purchaseForm = ''
+					// $('#purchaseWindow').html('');
+					var price = $(this).attr('data-price');
+					var entry = $(this).attr('rel');
+					console.log('price', price, 'entry', entry);
+					$('#purchaseWindow form input[name="stripeAmount"]').val(price * 100);
+					$('#purchaseWindow form input[name="entryId"]').val(entry);
+					$('#purchaseWindow span.stripeAmount').text(price);
 					if(entryId != 0)
 						entryId.children('#play').hide();
 					entryId = $(this);
@@ -399,7 +484,6 @@ require_once('server/kalturaConfig.php');
 	</script>
 </head>
 <body>
-	<a target="_blank" href="https://github.com/kaltura/Kaltura-Paid-Content-Gallery-With-PayPal-Sample-App"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
 	<div id="wrapper">
 		<div id="failConfig" class="notep" style="display: none">NOTE: Make sure to generate a configuration file using the PayPal Account Wizard.</div>
 		<div><img src="client/loadBar.gif" style="display: none;" id="loadBar"></div>
@@ -436,15 +520,18 @@ require_once('server/kalturaConfig.php');
 		</div>
 	</div>
 	<div id="purchaseWindow">
-		<form action="" method="POST">
-	  <script
-	    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-	    data-key="pk_test_Eh5nOIzdutIJDFPVVQqUcJkJ"
-	    data-amount="500"
-	    data-name="Pay Per View Content"
-	    data-description="Premium Media"
-	    data-image="/128x128.png">
-	  </script>
+		<h2>This is a premium video.<br>
+		You may gain access for $<span class="stripeAmount"></span>.</h2>
+		<form action="" method="POST" id="payment-form">
+	    <span class='payment-errors'></span>
+
+	    <input data-stripe="number" id="number" /><label for="number">Number</label>
+	    <input data-stripe="cvc" id="cvc" /><label for="cvc">CVC</label>
+	    <input data-stripe="exp-month" id="mo"/><label for="mo">Mo</label>
+	    <input data-stripe="exp-year" id="yr"/><label for="yr">Yr</label>
+	    <input type="hidden" name="stripeAmount" value="">
+	    <input type="hidden" name="entryId" value="">
+	    <button type="submit">Submit Payment</button>
 	  </form>
 	</div>
 	<div id="entryHighlight"></div>
