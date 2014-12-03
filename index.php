@@ -227,14 +227,14 @@ require_once('server/stripe-php/lib/Stripe.php');
 		// Loads the video is a Kaltura Dynamic Player
 		function loadVideo(ks,uiConfId,entryId) {
 			// prepare the first video for purchase
-			var $first = $('.entriesDiv').find('.thumblink:first');
-			var price = $first.attr('data-price');
-			var entry = $first.attr('rel');
-			console.log('first', price, entry);
+			// var $first = $('.entriesDiv').find('.thumblink:first');
+			// var price = $first.attr('data-price');
+			// var entry = $first.attr('rel');
+			// console.log('first', price, entry);
 
-			$('#purchaseWindow form input[name="stripeAmount"]').val(price * 100);
-			$('#purchaseWindow form input[name="entryId"]').val(entry);
-			$('#purchaseWindow span.stripeAmount').text(price);
+			// $('#purchaseWindow form input[name="stripeAmount"]').val(price * 100);
+			// $('#purchaseWindow form input[name="entryId"]').val(entry);
+			// $('#purchaseWindow span.stripeAmount').text(price);
 
 		        if (window.kdp) {
 		                kWidget.destroy(window.kdp);
@@ -522,7 +522,7 @@ require_once('server/stripe-php/lib/Stripe.php');
 	    <input data-stripe="exp-year" id="yr"/>
 	    <input type="hidden" name="stripeAmount" value="">
 	    <input type="hidden" name="entryId" value="">
-	    <button type="submit">Submit Payment</button>
+	    <button class="btnLogin" type="submit">Submit Payment</button>
 	  </form>
 	</div>
 	<div id="entryHighlight"></div>

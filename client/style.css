@@ -62,8 +62,8 @@ div.entriesDiv {
 
 #playerDivContainer {
 	float: left;
-	width: 400px;
-	height: 300px;
+/*	width: 400px;
+	height: 300px;*/
 }
 #playerDiv {
 	margin-top: 1px;
@@ -247,10 +247,28 @@ h1 {
 h2 {
 	font-size: 18px !important;
 }
-
+input {
+	  border: 6px solid #F7F9FA;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -moz-box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95a2a7 inset;
+  -webkit-box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95a2a7 inset;
+  box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95a2a7 inset;
+  margin: 3px 0 4px;
+  padding: 8px 6px;
+  width: 270px;
+  display: block;
+}
 #payment-form input {
 	clear: both;
   display: block;
+}
+
+input#mo, input#yr {
+    width: 33%;
+    clear: none;
+    /*float: left;*/
 }
 
 .loadmask {
