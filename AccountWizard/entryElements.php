@@ -131,7 +131,7 @@ if($paid == 'true') {
 }
 $currencyCodes = array("USD","AUD","CAD","CZK","DKK","EUR","HKD","HUF","JPY","NOK","NZD","PLN","GBP","SGD","SEK","CHF");
 $filter = new KalturaAccessControlProfileFilter();
-$filter->orderBy = "-createdAt";
+$filter->orderBy = "createdAt";
 $pager = new KalturaFilterPager();
 $pager->pageSize = 500;
 $pager->pageIndex = 1;

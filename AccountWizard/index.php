@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>PayPal Account Wizard</title>
+	<title>Admin Account Wizard</title>
 	<!-- Style Includes -->
 	<link href="style.css" media="screen" rel="stylesheet" type="text/css" />
 	<link href="lib/chosen/chosen.css" rel="stylesheet" />
@@ -69,7 +69,7 @@
 						$('#loginButton').hide();
 						$('#loginFooter').hide();
 						$('#loginForm').animate({height: "256px", marginTop: "-130px"}, 400);
-						$('#description').text("First setup your account for use with the tools. Create a PayPal ready player and setup the media that you would like to be paid content. Finally, generate a configuration file for the gallery.");
+						// $('#description').text("First setup your account for use with the tools. Create a PayPal ready player and setup the media that you would like to be paid content. Finally, generate a configuration file for the gallery.");
 						$('#page').slideDown();
 					}
 					else
@@ -348,7 +348,7 @@
 <body>
 	<form method="post" id="loginForm" action="javascript:loginSubmit();" class="box login">
 		<header style="text-align:center;">
-			<label><h1 style="font-weight:bold;">PayPal Account Wizard</h1></label>
+			<label><h1 style="font-weight:bold;">Admin Account</h1></label>
 			<p id="description" style="padding-bottom:10px;">Login to your Kaltura account to proceed.</p>
 		</header>
 		<div id="userLogin">
@@ -362,10 +362,10 @@
 		</div>
 		<div id="page" class="boxBody" style="display: none;">
 			<div id="buttons">
-				<button id="setupButton" type="button" class="setup" onclick="setupAccount()">Setup Account</button>
-				<button id="addPlayer" type="button" class="setup" onclick="choosePlayer()" style="margin-top: 4px;">Add PayPal Player</button>
+				<button id="setupButton" type="button" class="setup" onclick="setupAccount()" style="width:100%">Setup <br >Account</button>
+				<!-- <button id="addPlayer" type="button" class="setup" onclick="choosePlayer()" style="margin-top: 4px;">Add PayPal Player</button> -->
 				<button id="setPrices" type="button" class="setup" onclick="choosePricing()" style="margin-top: 4px;">Setup Media Pricing</button>
-				<button id="generateButton" type="button" class="setup" onclick="generateConfig()" style="margin-top: 4px;">Generate Config File</button>
+				<!-- <button id="generateButton" type="button" class="setup" onclick="generateConfig()" style="margin-top: 4px;">Generate Config File</button> -->
 			</div>
 			<div id="setupAccessProfile" style="display: none;"></div>
 			<div id="players" style="display: none;"></div>

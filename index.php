@@ -48,9 +48,10 @@ require_once('server/stripe-php/lib/Stripe.php');
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>Kaltura Paid-Content Gallery Sample App</title>
 	<!-- Style Includes -->
+	<link rel="stylesheet" href="client/colorbox/example4/colorbox.css" />
 	<link href="client/style.css" media="screen" rel="stylesheet" type="text/css" />
 	<link href="client/loadmask/jquery.loadmask.css" rel="stylesheet" type="text/css" />
-	<link rel="stylesheet" href="client/colorbox/example4/colorbox.css" />
+	<link href="AccountWizard/style.css" rel="stylesheet" type="text/css" />
 	<!-- Script Includes -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<script src="client/pptransact.js"></script>
@@ -112,13 +113,7 @@ require_once('server/stripe-php/lib/Stripe.php');
 						showEntries();
 				});
 			}
-			// if(isset($_POST['stripeToken'])){
-			// 	// Get the details submitted by the form
-			// 	$token = $_POST['stripeToken'];
-			// 	$amount = $_POST['stripeAmount'];
-			// 	$entryId = $_POST['entryId'];
-			// 	?>
-			// 	bill(entryId, $amount)
+
 			jQuery(function($) {
 			  $('#payment-form').submit(function(event) {
 			    var $form = $(this);
@@ -184,23 +179,6 @@ require_once('server/stripe-php/lib/Stripe.php');
 				$('#purchaseWindow').hide();
 				console.log("bill", msg);
 			});
-				// checkAccess(currentEntry, ret);
-			// });
-			// pptransact.bill({
-			// 	userId:'<?php echo $USER_ID; ?>',
-			// 	itemId:entryId,
-			// 	itemQty:'1',
-			// 	amount: amount,
-			// 	token: token,
-			// 	successCallback: function(ret) {
-			// 		//bill success
-			// 		console.log('bill success', ret);
-			// 		savePurchase(ret);
-			// 	},
-			// 	failCallback: function() {
-			// 		//bill canceled
-			// 	}
-			// });
 		}
 
 		function savePurchase(ret) {
@@ -248,6 +226,16 @@ require_once('server/stripe-php/lib/Stripe.php');
 		
 		// Loads the video is a Kaltura Dynamic Player
 		function loadVideo(ks,uiConfId,entryId) {
+			// prepare the first video for purchase
+			var $first = $('.entriesDiv').find('.thumblink:first');
+			var price = $first.attr('data-price');
+			var entry = $first.attr('rel');
+			console.log('first', price, entry);
+
+			$('#purchaseWindow form input[name="stripeAmount"]').val(price * 100);
+			$('#purchaseWindow form input[name="entryId"]').val(entry);
+			$('#purchaseWindow span.stripeAmount').text(price);
+
 		        if (window.kdp) {
 		                kWidget.destroy(window.kdp);
 		                delete(window.kdp);
@@ -290,7 +278,7 @@ require_once('server/stripe-php/lib/Stripe.php');
 				currentCategory = '';
 				if(categoryId != 0)
 					categoryId.css('borderColor', 'black');
-				$('#searchText').text('Search all channels by name, description, or tags: ');
+				$('#searchText').text('Search all by name, description, or tags: ');
 			}
 			if(!cat)
 				cat = currentCategory;
@@ -485,28 +473,28 @@ require_once('server/stripe-php/lib/Stripe.php');
 </head>
 <body>
 	<div id="wrapper">
-		<div id="failConfig" class="notep" style="display: none">NOTE: Make sure to generate a configuration file using the PayPal Account Wizard.</div>
+		<div id="failConfig" class="notep" style="display: none">NOTE: Make sure to generate a configuration file using the Admin Account Wizard.</div>
 		<div><img src="client/loadBar.gif" style="display: none;" id="loadBar"></div>
-		<h1>Kaltura Paid-Content Gallery Sample App</h1>
+		<h1>Paid Content Media Gallery</h1>
 		<div id="userDiv">
 			<div id="welcomeMessage">Welcome <span class="userid" title="This is a demo user, see note at the bottom of the page for more information."><?php echo $USER_ID; ?></span>,
-				<ul style="margin: 0;">
+				<!-- <ul style="margin: 0;">
 					<li>
 						<a href="javascript:showAllPurchases()">Click here to see your purchased videos and channels</a>
 					</li>
-				</ul>
+				</ul> -->
 			</div>
 			<div id="userVideos" style="float: left;"></div>
-			<div id="userChannels"></div>
-			<div id="viewPurchases"></div>
+			<!-- <div id="userChannels"></div>
+			<div id="viewPurchases"></div> -->
 		</div>
 	</div>
 	<div class="capsule">
 		<img src="client/loadBar.gif" style="display: none;" id="entryLoadBar">
-		<div id="channels">
+<!-- 		<div id="channels">
 			<h2 style="margin-top: 0px;">Channels</h2>
 			<div id="categoryList"></div>
-		</div>
+		</div> -->
 		<div class="searchDiv">
 			<span id="searchText">Search all channels by name, description, or tags: </span><input type="text" id="searchBar" autofocus="autofocus">
 			<button id="searchButton" class="searchButtonClass" type="button" onclick="showEntries()">Search</button>
@@ -516,7 +504,7 @@ require_once('server/stripe-php/lib/Stripe.php');
 		<div id="playerDivContainer"><div id="playerDiv"></div></div>
 		<div id="clearDiv" style="clear:both"></div>
 		<div id="adminDiv">
-			<button id="adminButton" type="button" onclick="location.href='AccountWizard'" style="margin-bottom: 11px; margin-left: -2px;">Admin Account Wizard</button>
+			<button id="adminButton" class="doneButton" type="button" onclick="location.href='AccountWizard'">Admin Login</button>
 		</div>
 	</div>
 	<div id="purchaseWindow">
@@ -524,11 +512,14 @@ require_once('server/stripe-php/lib/Stripe.php');
 		You may gain access for $<span class="stripeAmount"></span>.</h2>
 		<form action="" method="POST" id="payment-form">
 	    <span class='payment-errors'></span>
-
-	    <input data-stripe="number" id="number" /><label for="number">Number</label>
-	    <input data-stripe="cvc" id="cvc" /><label for="cvc">CVC</label>
-	    <input data-stripe="exp-month" id="mo"/><label for="mo">Mo</label>
-	    <input data-stripe="exp-year" id="yr"/><label for="yr">Yr</label>
+	    <label for="number">Number</label>
+	    <input data-stripe="number" id="number" />
+	    <label for="cvc">CVC</label>
+	    <input data-stripe="cvc" id="cvc" />
+	    <label for="mo">Mo</label>
+	    <input data-stripe="exp-month" id="mo"/>
+	    <label for="yr">Yr</label>
+	    <input data-stripe="exp-year" id="yr"/>
 	    <input type="hidden" name="stripeAmount" value="">
 	    <input type="hidden" name="entryId" value="">
 	    <button type="submit">Submit Payment</button>
