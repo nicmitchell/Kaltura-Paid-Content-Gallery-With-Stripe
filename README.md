@@ -1,21 +1,8 @@
 Kaltura PayPal Gallery
 ==================
 Kaltura Sample Application showing how to setup your Kaltura account and use PayPal for creating a gallery of pay-to-watch videos.
-This sample shows you how to sell single videos and also setup subscriptions for channels (categories). Once you setup your account using
-the provided setup wizard, your account will be ready to start selling videos to customers.
 
-How to get started
-------------
-This application comes with everything you need to get running. All that you need to do is download this package and host it on your server. 
-The application itself uses Kaltura so you must create an account. You may start a free trial at http://corp.kaltura.com and you must obviously
-upload your own content for the gallery to display any videos. You may find your uploaded entries at http://www.kaltura.com/index.php/kmc/kmc4#content|manage
-Upon the first load of the home page, nothing will load because the account has not been set up yet. 
-Click the Admin Account Wizard button and you should be brought to the PayPal Account Wizard. Log into the tool with your Kaltura credentials
-and you will be brought to a menu to get your account ready for use with the gallery.
-The tool has only 4 steps to follow and should be fairly easy to follow. The last step which involves generating the kalturaConfig.php file is what
-will finally allow your video gallery to load but this should only be performed after all the other steps have been completed.
-The generated file will automatically be saved in the correct directory on your server but it will also become available as a download in case
-you want your own copy of the file. You do not have to manually insert it though.
+This is very much a work in progress
 
 How it works
 ------------
@@ -42,23 +29,9 @@ preview). After submitting the information the content will be ready to sell. Yo
 will actually make that content free again in case you ever want to stop selling it (Doing this will simply set the metadata profile's 'Paid' option
 to false so that the gallery knows to use your free content player. In addition to this, it will set the video's access control profile to whatever
 profile you have deemed as the Default in your KMC). When you're done giving prices to your content, click done and you will return to the main menu.
-* Finally, now that your account has been fully setup to work with PayPal's libraries, you may generate a config file. As mentioned above, this will
-automatically place the file in the correct directory and will contain all the information required to run your video gallery.
 * In this particular sample, the user ID is randomly generated when the user first visits the gallery based on their IP address and this username
 is stored as a cookie. Therefore as long as the user does not clear their browser cookies they get to keep all their purchases. In a production
 environment it is encouraged to implement an actual user registration system.
-
-Pricing Architecture
---------------------
-You may have noticed that you can put prices on both videos and channels (categories). You might ask yourself, if a video is in a channel that costs
-$30 to subscribe to, but the individual video also has its own price of $2, which price would the customer pay to access the video? As long as a video
-has an individual price profile, the customer can buy that video regardless of a subscription to the channel. However, if no pricing is set for the
-video itself, the customer can only buy the video as part of a subscription. To offer the video as a standalone purchase, you must set the individual
-pricing for it.
-
-How purchases are stored
-------------------------
-PayPal's original HTML5 library uses local storage to keep a record of all the digital goods that the customer has purchased. Unfortunately, if the customer clears their browser data (including their HTML5 local storage) then any record of the purchase is erased. We have bypassed this verification system and instead used user custom metadata. When a customer makes a purchase, their user ID and purchases are stored with Kaltura so the information cannot be lost.
 
 Files
 -----
@@ -80,12 +53,3 @@ Folders
 * server/client - Contains the Kaltura PHP5 client library
 	(http://www.kaltura.com/api_v3/testme/client-libs.php)
 * server/cert - Contains the certification information to securely connect to PayPal
-
-Outstanding Issues
-------------------
-* At the moment there is no way to expire a purchase based on time. Once a user purchases some content, they will own it forever. There is also no way
-to refund the customer. Although the refund can be performed on PayPal, there is nothing in PayPal's library that allows us to then revoke the
-purchase and eliminate access to the videos (https://github.com/paypalx/html5-dg/issues/9)
-* There is also no way to purchase a subscription in the sense of recurring payments. In its current state, a customer may purchase access to a
-channel (category) so that every time a new video is added to said category they will be able to watch it without having to pay for it again.
-This however means they only have to pay for the channel once and there is no way to charge them on a monthly/annual basis (https://github.com/paypalx/html5-dg/issues/10)
