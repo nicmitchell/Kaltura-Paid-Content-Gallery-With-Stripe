@@ -106,21 +106,15 @@ foreach ($results->objects as $result) {
 	$pager = new KalturaFilterPager();
 	$pager->pageSize = 50;
 	$pager->pageIndex = 1;
+	$meta = $client->metadata->listAction($filter, $pager);
 	$metaResults = $client->metadata->listAction($filter, $pager)->objects;
 	foreach($metaResults as $meta){
 		// var_dump($meta);
-		$xml = simplexml_load_string($meta->xml);
-	$price = (float) $xml->Price;
+		if($meta->metadataProfileId == PAYPAL_METADATA_PROFILE_ID){
+			$xml = simplexml_load_string($meta->xml);
+			$price = (float) $xml->Price;
+		}
 	}
-	// $xml = simplexml_load_string($metaResults->xml);
-	// $price = (float) $xml->Price;
-	// foreach($metaResults->objects as $metaResult) {
-// var_dump( $metaResults );
-		// if($metaResults->metadataProfileId == PAYPAL_METADATA_PROFILE_ID) {
-		// 	$xml = simplexml_load_string($metaResult->xml);
-		// 	// $entry = $client->media->get($itemId);
-		// 	$price = (float) $xml->Price;
-		// }
 	$categoryNames = explode(',', $result->categories);
 	$title = $name."\n"."Belongs to channel(s): ";
 	foreach($categoryNames as $categoryName)
@@ -175,7 +169,9 @@ foreach ($results->objects as $result) {
 		$display =  $result->thumbnailUrl ? '<img width="120" height="68" id="thumb'.$count.'" src="'.$result->thumbnailUrl.'" title="'.$title.'" >' : '<div>'.$id.' '.$name.'</div>';
 	$display .= '<img src="client/play.png" id="play">';
 	$cats = $result->categoriesIds;
-	$thumbnail = '<a class="thumblink" data-price="'. $price .'" rel="'.$result->id.'" cats="'.$cats.'" title="'.$title.'" >'.$display.'</a>';
+	if(!isset($price)) { $price = 0; }
+	// $price = ($price || 0);
+	$thumbnail = '<a class="thumblink" data-price="'. $price  .'" rel="'.$result->id.'" cats="'.$cats.'" title="'.$title.'" >'.$display.'</a>';
 	echo '<div class="float1">';
 		echo $thumbnail.'   ';
 	echo '</div>';
