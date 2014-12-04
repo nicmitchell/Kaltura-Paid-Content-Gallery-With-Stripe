@@ -1,6 +1,6 @@
-Kaltura PayPal Gallery
+Kaltura PPV Gallery
 ==================
-Kaltura Sample Application showing how to setup your Kaltura account and use PayPal for creating a gallery of pay-to-watch videos.
+Kaltura Sample Application showing how to setup your Kaltura account and use Stripe for creating a gallery of pay-to-watch videos.
 
 This is very much a work in progress
 
@@ -21,7 +21,7 @@ different purchase routine when these buttons are clicked.
 * The third step is where you will actually be able to set the prices for your videos and your channels. Either select the 'Individual Entires' tab
 or the 'Categories' tab and you will be shown either all the videos or categories in your account. Clicking on a thumbnail for a video will then
 bring up a new window where the pricing information may be set. You will notice that there is a checkbox labeled 'Paid Content' that when checked,
-will show you all the different fields you must fill out for your video to properly work with PayPal's Digital Goods checkout. Enter the price, sales
+will show you all the different fields you must fill out for your video. Enter the price, sales
 tax and the currency you would like to use. Finally, at this point you should have created an Access Control Profile that you would like to use and
 you should choose the appropriate one. You may create multiple Access Control Profiles under the 'Setup Account' menu option and thus now have the
 option to choose the one you want to use for that specific video or channel (You might some videos to have a 10 second preview while others a 5 minute
@@ -37,7 +37,7 @@ Files
 -----
 
 * index.php - The front page that the user interacts with
-* client/pptransact.js - Paypal's Script for digital goods express checkouts
+* client/pptransact.js - Script for managing the checkout process
 * client/style.css - The styling for the front page
 * server/kalturaConfig.php - Stores all the constants such as the authorization information and player IDs
 	(This file can be automatically generated using the Account Wizard)
@@ -49,7 +49,6 @@ Folders
 
 * AccountWizard - Contains a setup wizard that allows the admin to completely set up an account to use the paid content gallery
 * server - Contains the html5-dg library with other files listed above
-	(https://github.com/paypalx/html5-dg)
 * server/client - Contains the Kaltura PHP5 client library
 	(http://www.kaltura.com/api_v3/testme/client-libs.php)
-* server/cert - Contains the certification information to securely connect to PayPal
+* server/cert - Contains the certification information
